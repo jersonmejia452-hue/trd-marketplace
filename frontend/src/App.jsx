@@ -10,6 +10,8 @@ function App() {
   const [role, setRole] = useState("comprador");
   const [message, setMessage] = useState("");
 
+  const [user, setUser] = useState(null);
+
   const handleLogin = async () => {
     try {
       const response = await fetch(
@@ -29,7 +31,11 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(`Bienvenido ${data.user.nombre} (${data.user.role})`);
+        setUser(data.user);
+
+        setMessage(
+          `Bienvenido ${data.user.nombre} (${data.user.role})`
+        );
       } else {
         setMessage(data.message);
       }
@@ -73,6 +79,7 @@ function App() {
       }}
     >
       <h1>TRD Marketplace</h1>
+
       <h2>Universidad de La Sabana</h2>
 
       <div
@@ -153,7 +160,27 @@ function App() {
           {isRegister ? "Registrarse" : "Ingresar"}
         </button>
 
-        <p style={{ marginTop: "15px" }}>{message}</p>
+        <p style={{ marginTop: "15px" }}>
+          {message}
+        </p>
+
+        {user && (
+          <div style={{ marginTop: "20px" }}>
+            <h3>Mi perfil</h3>
+
+            <p>
+              <strong>Nombre:</strong> {user.nombre}
+            </p>
+
+            <p>
+              <strong>Correo:</strong> {user.email}
+            </p>
+
+            <p>
+              <strong>Rol:</strong> {user.role}
+            </p>
+          </div>
+        )}
 
         <button
           onClick={() => {

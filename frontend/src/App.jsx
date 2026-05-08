@@ -8,7 +8,7 @@ function App() {
   const handleLogin = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/auth/login",
+       "https://trd-marketplace.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {

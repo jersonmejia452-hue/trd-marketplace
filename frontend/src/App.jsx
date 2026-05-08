@@ -1,3 +1,5 @@
+import React from "react";
+
 function App() {
   return (
     <div
@@ -9,7 +11,6 @@ function App() {
       }}
     >
       <h1>TRD Marketplace</h1>
-
       <h2>Universidad de La Sabana</h2>
 
       <div
@@ -26,21 +27,13 @@ function App() {
         <input
           type="email"
           placeholder="Correo institucional"
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "15px"
-          }}
+          style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
         />
 
         <input
           type="password"
           placeholder="Contraseña"
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "15px"
-          }}
+          style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
         />
 
         <button

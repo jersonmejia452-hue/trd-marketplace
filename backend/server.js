@@ -70,6 +70,45 @@ app.post("/api/auth/login", (req, res) => {
   });
 });
 
+app.post("/api/auth/register", (req, res) => {
+  const { nombre, email, password, role } = req.body;
+
+  if (!nombre || !email || !password || !role) {
+    return res.status(400).json({
+      message: "Todos los campos son obligatorios"
+    });
+  }
+
+  if (!email.endsWith("@unisabana.edu.co")) {
+    return res.status(403).json({
+      message: "Debe usar correo institucional"
+    });
+  }
+
+  const existingUser = users.find((u) => u.email === email);
+
+  if (existingUser) {
+    return res.status(409).json({
+      message: "El usuario ya existe"
+    });
+  }
+
+  const newUser = {
+    id: users.length + 1,
+    nombre,
+    email,
+    password,
+    role
+  };
+
+  users.push(newUser);
+
+  return res.status(201).json({
+    message: "Usuario registrado exitosamente",
+    user: newUser
+  });
+});
+
 app.listen(3000, () => {
   console.log("Servidor corriendo en puerto 3000");
 });

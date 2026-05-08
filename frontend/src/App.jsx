@@ -12,6 +12,10 @@ function App() {
 
   const [user, setUser] = useState(null);
 
+  const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+
   const handleLogin = async () => {
     try {
       const response = await fetch(
@@ -21,10 +25,7 @@ function App() {
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            email,
-            password
-          })
+          body: JSON.stringify({ email, password })
         }
       );
 
@@ -32,10 +33,7 @@ function App() {
 
       if (response.ok) {
         setUser(data.user);
-
-        setMessage(
-          `Bienvenido ${data.user.nombre} (${data.user.role})`
-        );
+        setMessage(`Bienvenido ${data.user.nombre} (${data.user.role})`);
       } else {
         setMessage(data.message);
       }
@@ -69,6 +67,37 @@ function App() {
     }
   };
 
+  const handleCreateProduct = async () => {
+    try {
+      const response = await fetch(
+        "https://trd-marketplace.onrender.com/api/products",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            nombre: productName,
+            descripcion: productDescription,
+            precio: productPrice
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      setMessage(data.message);
+
+      if (response.ok) {
+        setProductName("");
+        setProductDescription("");
+        setProductPrice("");
+      }
+    } catch (error) {
+      setMessage("Error conectando con el backend");
+    }
+  };
+
   return (
     <div
       style={{
@@ -79,7 +108,6 @@ function App() {
       }}
     >
       <h1>TRD Marketplace</h1>
-
       <h2>Universidad de La Sabana</h2>
 
       <div
@@ -99,11 +127,7 @@ function App() {
             placeholder="Nombre completo"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "15px"
-            }}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
           />
         )}
 
@@ -112,11 +136,7 @@ function App() {
           placeholder="Correo institucional"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "15px"
-          }}
+          style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
         />
 
         <input
@@ -124,22 +144,14 @@ function App() {
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "15px"
-          }}
+          style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
         />
 
         {isRegister && (
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "15px"
-            }}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
           >
             <option value="comprador">Comprador</option>
             <option value="vendedor">Vendedor</option>
@@ -160,25 +172,14 @@ function App() {
           {isRegister ? "Registrarse" : "Ingresar"}
         </button>
 
-        <p style={{ marginTop: "15px" }}>
-          {message}
-        </p>
+        <p style={{ marginTop: "15px" }}>{message}</p>
 
         {user && (
           <div style={{ marginTop: "20px" }}>
             <h3>Mi perfil</h3>
-
-            <p>
-              <strong>Nombre:</strong> {user.nombre}
-            </p>
-
-            <p>
-              <strong>Correo:</strong> {user.email}
-            </p>
-
-            <p>
-              <strong>Rol:</strong> {user.role}
-            </p>
+            <p><strong>Nombre:</strong> {user.nombre}</p>
+            <p><strong>Correo:</strong> {user.email}</p>
+            <p><strong>Rol:</strong> {user.role}</p>
           </div>
         )}
 
@@ -198,6 +199,58 @@ function App() {
           {isRegister ? "Ya tengo cuenta" : "Crear cuenta"}
         </button>
       </div>
+
+      {user && (user.role === "vendedor" || user.role === "admin") && (
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "30px",
+            width: "350px",
+            borderRadius: "10px",
+            marginTop: "30px"
+          }}
+        >
+          <h3>Crear producto</h3>
+
+          <input
+            type="text"
+            placeholder="Nombre del producto"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
+          />
+
+          <input
+            type="text"
+            placeholder="Descripción"
+            value={productDescription}
+            onChange={(e) => setProductDescription(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
+          />
+
+          <input
+            type="number"
+            placeholder="Precio"
+            value={productPrice}
+            onChange={(e) => setProductPrice(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
+          />
+
+          <button
+            onClick={handleCreateProduct}
+            style={{
+              width: "100%",
+              padding: "10px",
+              backgroundColor: "#16A34A",
+              color: "white",
+              border: "none",
+              borderRadius: "5px"
+            }}
+          >
+            Guardar producto
+          </button>
+        </div>
+      )}
     </div>
   );
 }

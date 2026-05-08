@@ -30,6 +30,8 @@ const users = [
   }
 ];
 
+const products = [];
+
 app.get("/", (req, res) => {
   res.send("TRD Marketplace Backend funcionando");
 });
@@ -109,6 +111,32 @@ app.post("/api/auth/register", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("Servidor corriendo en puerto 3000");
+app.post("/api/products", (req, res) => {
+  const { nombre, descripcion, precio } = req.body;
+
+  if (!nombre || !descripcion || !precio) {
+    return res.status(400).json({
+      message: "Todos los campos son obligatorios"
+    });
+  }
+
+  const newProduct = {
+    id: products.length + 1,
+    nombre,
+    descripcion,
+    precio
+  };
+
+  products.push(newProduct);
+
+  return res.status(201).json({
+    message: "Producto creado correctamente",
+    product: newProduct
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
 });

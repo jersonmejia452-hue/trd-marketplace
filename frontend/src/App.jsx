@@ -143,7 +143,7 @@ function App() {
               fontSize: "42px"
             }}
           >
-            TRD Marketplace
+            Marketplace
           </h1>
 
           <p

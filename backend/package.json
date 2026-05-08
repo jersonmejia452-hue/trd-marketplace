@@ -1,0 +1,15 @@
+{
+  "name": "trd-marketplace-backend",
+  "version": "1.0.0",
+  "description": "Backend TRD Marketplace Universidad de La Sabana",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Jersson",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}

@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 
 function App() {
+  const [isRegister, setIsRegister] = useState(false);
+
+  const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [role, setRole] = useState("comprador");
   const [message, setMessage] = useState("");
 
   const handleLogin = async () => {
     try {
       const response = await fetch(
-       "https://trd-marketplace.onrender.com/api/auth/login",
+        "https://trd-marketplace.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {
@@ -24,12 +29,35 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(
-          `Bienvenido ${data.user.nombre} (${data.user.role})`
-        );
+        setMessage(`Bienvenido ${data.user.nombre} (${data.user.role})`);
       } else {
         setMessage(data.message);
       }
+    } catch (error) {
+      setMessage("Error conectando con el backend");
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      const response = await fetch(
+        "https://trd-marketplace.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            nombre,
+            email,
+            password,
+            role
+          })
+        }
+      );
+
+      const data = await response.json();
+      setMessage(data.message);
     } catch (error) {
       setMessage("Error conectando con el backend");
     }
@@ -45,19 +73,32 @@ function App() {
       }}
     >
       <h1>TRD Marketplace</h1>
-
       <h2>Universidad de La Sabana</h2>
 
       <div
         style={{
           backgroundColor: "white",
           padding: "30px",
-          width: "300px",
+          width: "350px",
           borderRadius: "10px",
           marginTop: "30px"
         }}
       >
-        <h3>Login</h3>
+        <h3>{isRegister ? "Registro" : "Login"}</h3>
+
+        {isRegister && (
+          <input
+            type="text"
+            placeholder="Nombre completo"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              marginBottom: "15px"
+            }}
+          />
+        )}
 
         <input
           type="email"
@@ -83,8 +124,23 @@ function App() {
           }}
         />
 
+        {isRegister && (
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              marginBottom: "15px"
+            }}
+          >
+            <option value="comprador">Comprador</option>
+            <option value="vendedor">Vendedor</option>
+          </select>
+        )}
+
         <button
-          onClick={handleLogin}
+          onClick={isRegister ? handleRegister : handleLogin}
           style={{
             width: "100%",
             padding: "10px",
@@ -94,12 +150,26 @@ function App() {
             borderRadius: "5px"
           }}
         >
-          Ingresar
+          {isRegister ? "Registrarse" : "Ingresar"}
         </button>
 
-        <p style={{ marginTop: "15px" }}>
-          {message}
-        </p>
+        <p style={{ marginTop: "15px" }}>{message}</p>
+
+        <button
+          onClick={() => {
+            setIsRegister(!isRegister);
+            setMessage("");
+          }}
+          style={{
+            marginTop: "10px",
+            background: "none",
+            border: "none",
+            color: "#1D4ED8",
+            cursor: "pointer"
+          }}
+        >
+          {isRegister ? "Ya tengo cuenta" : "Crear cuenta"}
+        </button>
       </div>
     </div>
   );

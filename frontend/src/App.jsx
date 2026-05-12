@@ -250,15 +250,16 @@ export default function App() {
   }, [toast]);
 
   useEffect(() => {
-    if (!currentUser) return;
+    const user = data.users.find((item) => item.id === currentUserId);
+    if (!user) return;
     setProfileForm({
-      name: currentUser.name || "",
-      email: currentUser.email || "",
-      password: currentUser.password || "",
-      career: currentUser.career || "",
-      role: currentUser.role || "comprador",
+      name: user.name || "",
+      email: user.email || "",
+      password: user.password || "",
+      career: user.career || "",
+      role: user.role || "comprador",
     });
-  }, [currentUser]);
+  }, [currentUserId, data.users]);
 
   const currentUser = useMemo(
     () => data.users.find((user) => user.id === currentUserId) || null,

@@ -46,7 +46,7 @@ const initialProducts = [
     price: 75000,
     category: "Tecnología",
     condition: "Usado",
-    image: "https://www.koetoficial.com/cdn/shop/files/FX-991LAPLUS2-W-DT_1.webp?v=1757533046&width=500",
+    image: "https://images.unsplash.com/photo-1616627986870-1c57f8f5383f?auto=format&fit=crop&w=900&q=80",
     sellerId: 2,
     stock: 1,
     active: true,
@@ -231,6 +231,13 @@ export default function App() {
   });
   const [messageText, setMessageText] = useState("");
   const [reviewForm, setReviewForm] = useState({ sellerId: "", rating: 5, comment: "" });
+  const [profileForm, setProfileForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    career: "",
+    role: "comprador",
+  });
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -241,6 +248,17 @@ export default function App() {
     const timer = setTimeout(() => setToast(""), 2600);
     return () => clearTimeout(timer);
   }, [toast]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    setProfileForm({
+      name: currentUser.name || "",
+      email: currentUser.email || "",
+      password: currentUser.password || "",
+      career: currentUser.career || "",
+      role: currentUser.role || "comprador",
+    });
+  }, [currentUser]);
 
   const currentUser = useMemo(
     () => data.users.find((user) => user.id === currentUserId) || null,
@@ -494,6 +512,44 @@ export default function App() {
     notify("Mensaje enviado al vendedor", "Chat");
   }
 
+  function saveProfile(event) {
+    event.preventDefault();
+
+    const email = profileForm.email.trim().toLowerCase();
+    if (!email.endsWith("@unisabana.edu.co")) {
+      setToast("El correo debe ser institucional @unisabana.edu.co");
+      return;
+    }
+
+    const emailInUse = data.users.some(
+      (user) => user.id !== currentUser.id && user.email.toLowerCase() === email
+    );
+
+    if (emailInUse) {
+      setToast("Ese correo ya está en uso por otro usuario");
+      return;
+    }
+
+    updateData((prev) => ({
+      ...prev,
+      users: prev.users.map((user) =>
+        user.id === currentUser.id
+          ? {
+              ...user,
+              name: profileForm.name.trim() || user.name,
+              email,
+              password: profileForm.password || user.password,
+              career: profileForm.career.trim(),
+              role: profileForm.role,
+              avatar: getInitials(profileForm.name.trim() || user.name),
+            }
+          : user
+      ),
+    }));
+
+    notify("Perfil actualizado correctamente", "Perfil");
+  }
+
   function submitReview(event) {
     event.preventDefault();
     if (!reviewForm.sellerId || !reviewForm.comment.trim()) {
@@ -675,6 +731,7 @@ export default function App() {
           <button className={activePage === "publicar" ? "active" : ""} onClick={() => setActivePage("publicar")}>Publicar</button>
           <button className={activePage === "carrito" ? "active" : ""} onClick={() => setActivePage("carrito")}>Carrito {cartItems.length > 0 && <b>{cartItems.length}</b>}</button>
           <button className={activePage === "ordenes" ? "active" : ""} onClick={() => setActivePage("ordenes")}>Órdenes</button>
+          <button className={activePage === "perfil" ? "active" : ""} onClick={() => setActivePage("perfil")}>Perfil</button>
           <button className={activePage === "notificaciones" ? "active" : ""} onClick={() => setActivePage("notificaciones")}>Notificaciones {unreadCount > 0 && <b>{unreadCount}</b>}</button>
           {currentUser.role === "admin" && (
             <button className={activePage === "admin" ? "active" : ""} onClick={() => setActivePage("admin")}>Admin</button>
@@ -954,6 +1011,96 @@ export default function App() {
               <button className="primary full">Enviar reseña</button>
             </form>
           </section>
+        </main>
+      )}
+
+      {activePage === "perfil" && (
+        <main className="page-grid">
+          <section className="panel form-panel">
+            <span className="eyebrow">Mi cuenta</span>
+            <h2>Modificar perfil</h2>
+            <p className="muted">
+              Actualiza tus datos personales y cambia tu rol entre comprador y vendedor.
+            </p>
+
+            <form onSubmit={saveProfile} className="form-grid">
+              <label>
+                Nombre
+                <input
+                  value={profileForm.name}
+                  onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                  placeholder="Tu nombre completo"
+                />
+              </label>
+
+              <label>
+                Carrera
+                <input
+                  value={profileForm.career}
+                  onChange={(e) => setProfileForm({ ...profileForm, career: e.target.value })}
+                  placeholder="Ej: Ingeniería, Medicina, Economía"
+                />
+              </label>
+
+              <label>
+                Correo institucional
+                <input
+                  value={profileForm.email}
+                  onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                  placeholder="usuario@unisabana.edu.co"
+                />
+              </label>
+
+              <label>
+                Contraseña
+                <input
+                  type="password"
+                  value={profileForm.password}
+                  onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
+                  placeholder="Nueva contraseña"
+                />
+              </label>
+
+              <label className="full">
+                Rol
+                <select
+                  value={profileForm.role}
+                  onChange={(e) => setProfileForm({ ...profileForm, role: e.target.value })}
+                >
+                  <option value="comprador">Comprador</option>
+                  <option value="vendedor">Vendedor</option>
+                  {currentUser.role === "admin" && <option value="admin">Administrador</option>}
+                </select>
+              </label>
+
+              <button className="primary full" type="submit">Guardar cambios</button>
+            </form>
+          </section>
+
+          <aside className="panel profile-preview">
+            <span className="eyebrow">Vista previa</span>
+            <div className="profile-avatar">{getInitials(profileForm.name || currentUser.name)}</div>
+            <h2>{profileForm.name || currentUser.name}</h2>
+            <p className="muted">{profileForm.email}</p>
+            <div className="profile-info">
+              <div>
+                <strong>{profileForm.role}</strong>
+                <span>Rol actual</span>
+              </div>
+              <div>
+                <strong>{profileForm.career || "Sin carrera"}</strong>
+                <span>Carrera</span>
+              </div>
+              <div>
+                <strong>⭐ {currentUser.reputation || "Nuevo"}</strong>
+                <span>Reputación</span>
+              </div>
+              <div>
+                <strong>{sellerProducts.length}</strong>
+                <span>Productos publicados</span>
+              </div>
+            </div>
+          </aside>
         </main>
       )}
 
@@ -1754,6 +1901,54 @@ label {
 
 .notification {
   grid-template-columns: 120px 1fr;
+}
+
+.profile-preview {
+  height: fit-content;
+  text-align: center;
+  position: sticky;
+  top: 96px;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 110px;
+  height: 110px;
+  margin: 10px auto 14px;
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 950;
+  border-radius: 34px;
+  background: linear-gradient(135deg, var(--blue), var(--gold));
+  box-shadow: 0 18px 35px rgba(7, 31, 69, 0.22);
+}
+
+.profile-info {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.profile-info div {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fbfcff;
+}
+
+.profile-info strong,
+.profile-info span {
+  display: block;
+}
+
+.profile-info strong {
+  color: var(--blue);
+}
+
+.profile-info span {
+  color: var(--muted);
+  font-size: 0.86rem;
 }
 
 .notification span {

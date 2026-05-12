@@ -99,12 +99,12 @@ function App() {
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            titulo,
-            descripcion,
-            precio,
-            vendedor: user.nombre
-          })
+         body: JSON.stringify({
+  nombre: titulo,
+  descripcion,
+  precio,
+  vendedor: user.nombre
+           })
         }
       );
 
@@ -408,7 +408,7 @@ function App() {
                     Imagen producto
                   </div>
 
-                  <h3>{product.titulo || product.nombre}</h3>
+                <h3>{product.nombre}</h3>
 
                   <p>{product.descripcion}</p>
 

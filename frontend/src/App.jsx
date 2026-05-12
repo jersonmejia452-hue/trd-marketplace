@@ -16,6 +16,8 @@ function App() {
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
 
+  const [products, setProducts] = useState([]);
+
   const handleLogin = async () => {
     try {
       const response = await fetch(
@@ -94,11 +96,23 @@ function App() {
 
       const data = await response.json();
 
-      setMessage(data.message);
+      if (response.ok) {
+        setProducts([
+          ...products,
+          {
+            titulo,
+            descripcion,
+            precio,
+            vendedor: user.nombre
+          }
+        ]);
 
-      setTitulo("");
-      setDescripcion("");
-      setPrecio("");
+        setTitulo("");
+        setDescripcion("");
+        setPrecio("");
+      }
+
+      setMessage(data.message);
     } catch (error) {
       setMessage("Error creando producto");
     }
@@ -108,185 +122,232 @@ function App() {
     <div
       style={{
         fontFamily: "Arial",
-        padding: "40px",
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#eeeeee",
         minHeight: "100vh"
       }}
     >
       <div
         style={{
+          backgroundColor: "#00205B",
+          color: "white",
+          padding: "18px 40px",
           display: "flex",
           alignItems: "center",
-          gap: "20px",
-          backgroundColor: "#001F5B",
-          padding: "20px",
-          borderRadius: "12px",
-          color: "white",
-          marginBottom: "30px"
+          justifyContent: "space-between",
+          borderRadius: "0 0 16px 16px"
         }}
       >
-        <img
-          src="/la_sabana.jpg"
-          alt="Logo Universidad"
+        <div
           style={{
-            width: "220px",
-            backgroundColor: "white",
-            padding: "10px",
-            borderRadius: "10px"
+            display: "flex",
+            alignItems: "center",
+            gap: "15px"
+          }}
+        >
+          <img
+            src="/la_sabana.jpg"
+            alt="Logo"
+            style={{
+              width: "130px",
+              backgroundColor: "white",
+              padding: "6px",
+              borderRadius: "8px"
+            }}
+          />
+
+          <div>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: "28px"
+              }}
+            >
+              TRD Marketplace
+            </h1>
+
+            <p
+              style={{
+                margin: 0,
+                fontSize: "14px"
+              }}
+            >
+              Compra y vende dentro de la Universidad
+            </p>
+          </div>
+        </div>
+
+        <input
+          placeholder="Buscar productos..."
+          style={{
+            width: "350px",
+            padding: "12px",
+            borderRadius: "8px",
+            border: "none"
           }}
         />
-
-        <div>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "42px"
-            }}
-          >
-            Marketplace
-          </h1>
-
-          <p
-            style={{
-              marginTop: "10px",
-              fontSize: "18px"
-            }}
-          >
-            Plataforma universitaria de compra y venta
-          </p>
-        </div>
       </div>
 
       {!user ? (
         <div
           style={{
-            backgroundColor: "white",
-            padding: "30px",
-            width: "350px",
-            borderRadius: "10px"
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "60px"
           }}
         >
-          <h3>{isRegister ? "Registro" : "Login"}</h3>
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "40px",
+              width: "400px",
+              borderRadius: "12px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+            }}
+          >
+            <h2>{isRegister ? "Registro" : "Login"}</h2>
 
-          {isRegister && (
+            {isRegister && (
+              <input
+                type="text"
+                placeholder="Nombre completo"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  marginBottom: "15px"
+                }}
+              />
+            )}
+
             <input
-              type="text"
-              placeholder="Nombre completo"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
+              type="email"
+              placeholder="Correo institucional"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               style={{
                 width: "100%",
-                padding: "10px",
+                padding: "12px",
                 marginBottom: "15px"
               }}
             />
-          )}
 
-          <input
-            type="email"
-            placeholder="Correo institucional"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "15px"
-            }}
-          />
-
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "15px"
-            }}
-          />
-
-          {isRegister && (
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               style={{
                 width: "100%",
-                padding: "10px",
+                padding: "12px",
                 marginBottom: "15px"
               }}
+            />
+
+            {isRegister && (
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  marginBottom: "15px"
+                }}
+              >
+                <option value="comprador">Comprador</option>
+                <option value="vendedor">Vendedor</option>
+              </select>
+            )}
+
+            <button
+              onClick={
+                isRegister
+                  ? handleRegister
+                  : handleLogin
+              }
+              style={{
+                width: "100%",
+                padding: "12px",
+                backgroundColor: "#2968C8",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                fontSize: "16px"
+              }}
             >
-              <option value="comprador">Comprador</option>
-              <option value="vendedor">Vendedor</option>
-            </select>
-          )}
+              {isRegister
+                ? "Registrarse"
+                : "Ingresar"}
+            </button>
 
-          <button
-            onClick={isRegister ? handleRegister : handleLogin}
-            style={{
-              width: "100%",
-              padding: "10px",
-              backgroundColor: "#1D4ED8",
-              color: "white",
-              border: "none",
-              borderRadius: "5px"
-            }}
-          >
-            {isRegister ? "Registrarse" : "Ingresar"}
-          </button>
+            <p style={{ marginTop: "15px" }}>
+              {message}
+            </p>
 
-          <p style={{ marginTop: "15px" }}>
-            {message}
-          </p>
-
-          <button
-            onClick={() => {
-              setIsRegister(!isRegister);
-              setMessage("");
-            }}
-            style={{
-              marginTop: "10px",
-              background: "none",
-              border: "none",
-              color: "#1D4ED8",
-              cursor: "pointer"
-            }}
-          >
-            {isRegister ? "Ya tengo cuenta" : "Crear cuenta"}
-          </button>
+            <button
+              onClick={() => {
+                setIsRegister(!isRegister);
+                setMessage("");
+              }}
+              style={{
+                marginTop: "10px",
+                background: "none",
+                border: "none",
+                color: "#2968C8",
+                cursor: "pointer"
+              }}
+            >
+              {isRegister
+                ? "Ya tengo cuenta"
+                : "Crear cuenta"}
+            </button>
+          </div>
         </div>
       ) : (
         <div
           style={{
-            backgroundColor: "white",
-            padding: "40px",
-            borderRadius: "12px",
-            maxWidth: "500px"
+            padding: "40px"
           }}
         >
-          <h2>
-            Bienvenido {user.nombre}
-          </h2>
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "30px",
+              borderRadius: "12px",
+              marginBottom: "30px"
+            }}
+          >
+            <h2>
+              Bienvenido {user.nombre}
+            </h2>
 
-          <p>
-            <strong>Rol:</strong> {user.role}
-          </p>
+            <p>
+              <strong>Rol:</strong> {user.role}
+            </p>
+          </div>
 
           {(user.role === "vendedor" ||
             user.role === "admin") && (
-            <>
-              <h2 style={{ marginTop: "30px" }}>
-                Crear producto
-              </h2>
+            <div
+              style={{
+                backgroundColor: "white",
+                padding: "30px",
+                borderRadius: "12px",
+                marginBottom: "30px"
+              }}
+            >
+              <h2>Crear producto</h2>
 
               <input
                 type="text"
                 placeholder="Título"
                 value={titulo}
-                onChange={(e) => setTitulo(e.target.value)}
+                onChange={(e) =>
+                  setTitulo(e.target.value)
+                }
                 style={{
                   width: "100%",
-                  padding: "10px",
+                  padding: "12px",
                   marginBottom: "15px"
                 }}
               />
@@ -300,7 +361,7 @@ function App() {
                 }
                 style={{
                   width: "100%",
-                  padding: "10px",
+                  padding: "12px",
                   marginBottom: "15px"
                 }}
               />
@@ -309,10 +370,12 @@ function App() {
                 type="number"
                 placeholder="Precio"
                 value={precio}
-                onChange={(e) => setPrecio(e.target.value)}
+                onChange={(e) =>
+                  setPrecio(e.target.value)
+                }
                 style={{
                   width: "100%",
-                  padding: "10px",
+                  padding: "12px",
                   marginBottom: "15px"
                 }}
               />
@@ -322,20 +385,79 @@ function App() {
                 style={{
                   width: "100%",
                   padding: "12px",
-                  backgroundColor: "#16A34A",
+                  backgroundColor: "#00A650",
                   color: "white",
                   border: "none",
-                  borderRadius: "5px"
+                  borderRadius: "8px",
+                  fontSize: "16px"
                 }}
               >
-                Guardar producto
+                Publicar producto
               </button>
-            </>
+            </div>
           )}
 
-          <p style={{ marginTop: "20px" }}>
-            {message}
-          </p>
+          <div>
+            <h2>Productos publicados</h2>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fill, minmax(250px, 1fr))",
+                gap: "20px",
+                marginTop: "20px"
+              }}
+            >
+              {products.map((product, index) => (
+                <div
+                  key={index}
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    padding: "20px",
+                    boxShadow:
+                      "0 2px 10px rgba(0,0,0,0.1)"
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "180px",
+                      backgroundColor: "#f2f2f2",
+                      borderRadius: "8px",
+                      marginBottom: "15px"
+                    }}
+                  ></div>
+
+                  <h3>{product.titulo}</h3>
+
+                  <p>{product.descripcion}</p>
+
+                  <h2 style={{ color: "#00A650" }}>
+                    ${product.precio}
+                  </h2>
+
+                  <p>
+                    <strong>Vendedor:</strong>{" "}
+                    {product.vendedor}
+                  </p>
+
+                  <button
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      backgroundColor: "#2968C8",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "8px"
+                    }}
+                  >
+                    Ver producto
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>

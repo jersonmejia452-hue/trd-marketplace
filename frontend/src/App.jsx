@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-const STORAGE_KEY = "trd-marketplace-demo-v1";
+const STORAGE_KEY = "marketplace-sabana-demo-v1";
 
 const initialUsers = [
   {
@@ -576,9 +576,11 @@ export default function App() {
         <section className="login-card">
           <div className="login-left">
             <div className="brand login-brand">
-              <div className="brand-mark">TRD</div>
+              <div className="brand-mark logo-mark">
+            <img src="/la_sabana.jpg" alt="Logo Universidad de La Sabana" />
+          </div>
               <div>
-                <strong>TRD Marketplace</strong>
+                <strong>Marketplace</strong>
                 <span>Universidad de La Sabana</span>
               </div>
             </div>
@@ -659,9 +661,11 @@ export default function App() {
 
       <header className="topbar">
         <div className="brand" onClick={() => setActivePage("inicio")}>
-          <div className="brand-mark">TRD</div>
+          <div className="brand-mark logo-mark">
+            <img src="/la_sabana.jpg" alt="Logo Universidad de La Sabana" />
+          </div>
           <div>
-            <strong>TRD Marketplace</strong>
+            <strong>Marketplace</strong>
             <span>Universidad de La Sabana</span>
           </div>
         </div>
@@ -1094,7 +1098,9 @@ export default function App() {
           <section className="auth-modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowAuth(false)}>×</button>
             <div className="brand auth-brand">
-              <div className="brand-mark">TRD</div>
+              <div className="brand-mark logo-mark">
+            <img src="/la_sabana.jpg" alt="Logo Universidad de La Sabana" />
+          </div>
               <div>
                 <strong>{authMode === "login" ? "Iniciar sesión" : "Crear cuenta"}</strong>
                 <span>Correo institucional</span>
@@ -1226,15 +1232,24 @@ img {
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   color: white;
   font-weight: 900;
   letter-spacing: -0.06em;
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--blue), var(--blue-2));
+  border-radius: 18px;
+  background: white;
   border: 2px solid rgba(202, 166, 75, 0.75);
   box-shadow: 0 10px 25px rgba(7, 31, 69, 0.25);
+  overflow: hidden;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+  border-radius: 14px;
 }
 
 .brand strong,

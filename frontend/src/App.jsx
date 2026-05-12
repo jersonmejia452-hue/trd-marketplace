@@ -46,7 +46,7 @@ const initialProducts = [
     price: 75000,
     category: "Tecnología",
     condition: "Usado",
-    image: "https://images.unsplash.com/photo-1616627986870-1c57f8f5383f?auto=format&fit=crop&w=900&q=80",
+    image: "https://www.koetoficial.com/cdn/shop/files/FX-991LAPLUS2-W-DT_1.webp?v=1757533046&width=500",
     sellerId: 2,
     stock: 1,
     active: true,

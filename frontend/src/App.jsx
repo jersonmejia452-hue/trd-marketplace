@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function App() {
   const [isRegister, setIsRegister] = useState(false);
@@ -17,6 +17,24 @@ function App() {
   const [precio, setPrecio] = useState("");
 
   const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(
+        "https://trd-marketplace.onrender.com/api/products"
+      );
+
+      const data = await response.json();
+
+      setProducts(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleLogin = async () => {
     try {
@@ -38,10 +56,7 @@ function App() {
 
       if (response.ok) {
         setUser(data.user);
-
-        setMessage(
-          `Bienvenido ${data.user.nombre} (${data.user.role})`
-        );
+        setMessage(`Bienvenido ${data.user.nombre} (${data.user.role})`);
       } else {
         setMessage(data.message);
       }
@@ -69,7 +84,6 @@ function App() {
       );
 
       const data = await response.json();
-
       setMessage(data.message);
     } catch (error) {
       setMessage("Error conectando con el backend");
@@ -97,15 +111,7 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
-        setProducts([
-          ...products,
-          {
-            titulo,
-            descripcion,
-            precio,
-            vendedor: user.nombre
-          }
-        ]);
+        fetchProducts();
 
         setTitulo("");
         setDescripcion("");
@@ -156,21 +162,11 @@ function App() {
           />
 
           <div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: "28px"
-              }}
-            >
+            <h1 style={{ margin: 0, fontSize: "28px" }}>
               TRD Marketplace
             </h1>
 
-            <p
-              style={{
-                margin: 0,
-                fontSize: "14px"
-              }}
-            >
+            <p style={{ margin: 0, fontSize: "14px" }}>
               Compra y vende dentro de la Universidad
             </p>
           </div>
@@ -260,11 +256,7 @@ function App() {
             )}
 
             <button
-              onClick={
-                isRegister
-                  ? handleRegister
-                  : handleLogin
-              }
+              onClick={isRegister ? handleRegister : handleLogin}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -275,14 +267,10 @@ function App() {
                 fontSize: "16px"
               }}
             >
-              {isRegister
-                ? "Registrarse"
-                : "Ingresar"}
+              {isRegister ? "Registrarse" : "Ingresar"}
             </button>
 
-            <p style={{ marginTop: "15px" }}>
-              {message}
-            </p>
+            <p style={{ marginTop: "15px" }}>{message}</p>
 
             <button
               onClick={() => {
@@ -297,18 +285,12 @@ function App() {
                 cursor: "pointer"
               }}
             >
-              {isRegister
-                ? "Ya tengo cuenta"
-                : "Crear cuenta"}
+              {isRegister ? "Ya tengo cuenta" : "Crear cuenta"}
             </button>
           </div>
         </div>
       ) : (
-        <div
-          style={{
-            padding: "40px"
-          }}
-        >
+        <div style={{ padding: "40px" }}>
           <div
             style={{
               backgroundColor: "white",
@@ -317,17 +299,16 @@ function App() {
               marginBottom: "30px"
             }}
           >
-            <h2>
-              Bienvenido {user.nombre}
-            </h2>
-
+            <h2>Bienvenido {user.nombre}</h2>
+            <p>
+              <strong>Correo:</strong> {user.email}
+            </p>
             <p>
               <strong>Rol:</strong> {user.role}
             </p>
           </div>
 
-          {(user.role === "vendedor" ||
-            user.role === "admin") && (
+          {(user.role === "vendedor" || user.role === "admin") && (
             <div
               style={{
                 backgroundColor: "white",
@@ -342,9 +323,7 @@ function App() {
                 type="text"
                 placeholder="Título"
                 value={titulo}
-                onChange={(e) =>
-                  setTitulo(e.target.value)
-                }
+                onChange={(e) => setTitulo(e.target.value)}
                 style={{
                   width: "100%",
                   padding: "12px",
@@ -356,9 +335,7 @@ function App() {
                 type="text"
                 placeholder="Descripción"
                 value={descripcion}
-                onChange={(e) =>
-                  setDescripcion(e.target.value)
-                }
+                onChange={(e) => setDescripcion(e.target.value)}
                 style={{
                   width: "100%",
                   padding: "12px",
@@ -370,9 +347,7 @@ function App() {
                 type="number"
                 placeholder="Precio"
                 value={precio}
-                onChange={(e) =>
-                  setPrecio(e.target.value)
-                }
+                onChange={(e) => setPrecio(e.target.value)}
                 style={{
                   width: "100%",
                   padding: "12px",
@@ -403,8 +378,7 @@ function App() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fill, minmax(250px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
                 gap: "20px",
                 marginTop: "20px"
               }}
@@ -416,8 +390,7 @@ function App() {
                     backgroundColor: "white",
                     borderRadius: "12px",
                     padding: "20px",
-                    boxShadow:
-                      "0 2px 10px rgba(0,0,0,0.1)"
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
                   }}
                 >
                   <div
@@ -425,11 +398,17 @@ function App() {
                       height: "180px",
                       backgroundColor: "#f2f2f2",
                       borderRadius: "8px",
-                      marginBottom: "15px"
+                      marginBottom: "15px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#888"
                     }}
-                  ></div>
+                  >
+                    Imagen producto
+                  </div>
 
-                  <h3>{product.titulo}</h3>
+                  <h3>{product.titulo || product.nombre}</h3>
 
                   <p>{product.descripcion}</p>
 
@@ -439,7 +418,7 @@ function App() {
 
                   <p>
                     <strong>Vendedor:</strong>{" "}
-                    {product.vendedor}
+                    {product.vendedor || "Universidad"}
                   </p>
 
                   <button

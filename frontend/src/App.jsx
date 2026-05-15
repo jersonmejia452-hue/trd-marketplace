@@ -163,13 +163,6 @@ function getInitials(name = "Usuario") {
 }
 
 function loadData() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
-  } catch (error) {
-    console.error("No se pudo leer localStorage", error);
-  }
-
   return {
     users: initialUsers,
     products: initialProducts,
@@ -200,6 +193,8 @@ function loadData() {
     ],
   };
 }
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function App() {
   const [data, setData] = useState(loadData);
